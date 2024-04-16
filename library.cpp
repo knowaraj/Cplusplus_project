@@ -7,6 +7,8 @@
 #include <iomanip>
 
 using namespace std;
+/*    ((char*)&b, sizeof(b))  and   (reinterpret_cast<char*>(&b), sizeof(b)) works like same thing */
+	
 
 class Book {
 protected:
