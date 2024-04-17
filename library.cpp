@@ -42,7 +42,7 @@ public:
 };
 
 fstream fb;
-fstream fi;
+//fstream fi;
 fstream fp;
 fstream fd;
 
@@ -185,12 +185,14 @@ void Student::issue() {
     }
 
     Book b;
+    Student s;
     cout << "\n\tEnter book id to Issue : ";
     cin >> bid;
     while (fb.read(reinterpret_cast<char*>(&b), sizeof(b))) {
         if (b.sn == bid) {
             check = 1;
-            strcpy(bname, b.bname); 
+            s.bid=bid;
+            strcpy(s.bname, b.bname);
             break;
         } else {
             check = 2;
@@ -204,25 +206,28 @@ void Student::issue() {
         return; 
     }
 
-    fi.open("issuedbooks.dat", ios::app | ios::binary);
+    
+    
+    strcpy(s.bname, bname);
+    cout << "\n\tEnter student name : ";
+    cin.ignore();
+    cin.getline(s.stname, 30);
+    cout << "\n\tEnter student class : ";
+    cin >> s.clas;
+    cout << "\n\tEnter student id : ";
+    cin.ignore();
+    cin >> s.id;
+    cout << "\n\tEnter date in year/month/day order : ";
+    cin.ignore();
+    cin.getline(s.date, 15);
+	ofstream fi;
+    fi.open("issuedbooks.txt", ios::app | ios::binary);
     if (!fi.is_open()) {
         cout << "Error: Unable to open file for writing." << endl;
         return;
     }
 
-    cout << "\n\tEnter student name : ";
-    cin.ignore();
-    cin.getline(stname, 30);
-    cout << "\n\tEnter student class : ";
-    cin >> clas;
-    cout << "\n\tEnter student id : ";
-    cin.ignore();
-    cin >> id;
-    cout << "\n\tEnter date in year/month/day order : ";
-    cin.ignore();
-    cin.getline(date, 15);
-
-    fi.write(reinterpret_cast<char*>(this), sizeof(*this));
+    fi.write(reinterpret_cast<char*>(&s), sizeof(s));
     if (fi.fail()) {
         cout << "Error: Failed to write data to file." << endl;
     } else {
@@ -232,11 +237,13 @@ void Student::issue() {
     fi.close();
 }
 
+
 void Student::retbook() {
     fstream fs;
     int id, sn, check = 0;
     system("cls");
-    fi.open("issuedbooks.dat", ios::in | ios::binary);
+    fstream fi;
+	fi.open("issuedbooks.txt", ios::in | ios::binary);
     cout << "\n\n\tEnter std id and book id to Remove : ";
     cin >> id >> sn;
     fs.open("dl.txt", ios::out | ios::binary);
@@ -251,8 +258,8 @@ void Student::retbook() {
     }
     fi.close();
     fs.close();
-    remove("issuedbooks.dat");
-    rename("dl.txt", "issuedbooks.dat");
+    remove("issuedbooks.txt");
+    rename("dl.txt", "issuedbooks.txt");
     if (check == 1) {
         cout << "\n\tBook returned Successfully..\n\n\n\n\n";
     }
@@ -265,7 +272,8 @@ void Student::issuelist() {
     system("cls");
     cout << "\n\t\t Issued Book list : ";
     cout << "\n" << setw(10) << "Student ID" << setw(20) << "Student Name" << setw(10) << "Student Class" << setw(10) << "Book ID" << setw(20) << "Book name" << setw(15) << "Date" << endl;
-    fi.open("issuedbooks.dat", ios::in | ios::binary);
+    fstream fi;
+	fi.open("issuedbooks.txt", ios::in | ios::binary);
     Student s;
     while (fi.read(reinterpret_cast<char*>(&s), sizeof(s))) {
         cout << "\n" << setw(10) << s.id << setw(20) << s.stname << setw(10) << s.clas << setw(10) << s.bid << setw(20) << s.bname << setw(15) << s.date << endl;
